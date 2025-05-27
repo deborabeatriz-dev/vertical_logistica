@@ -20,8 +20,7 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @OneToOne
-    @Column(name = "orders")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
 
 }

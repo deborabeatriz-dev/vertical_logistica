@@ -3,6 +3,7 @@ package com.dev.vertical_logistica.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,10 +29,8 @@ public class Order {
     @Column(name = "date")
     private LocalDate date;
 
-    @OneToMany
-    @Column(name = "products")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
-    
 
     @ManyToOne
     @JoinColumn(name = "user_id")
