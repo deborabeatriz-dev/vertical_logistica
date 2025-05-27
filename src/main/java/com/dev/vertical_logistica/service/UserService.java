@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
-import com.dev.vertical_logistica.model.Order;
+import com.dev.vertical_logistica.model.OrderUser;
 import com.dev.vertical_logistica.model.User;
 import com.dev.vertical_logistica.repository.UserRepository;
 
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final OrderService orderService;
+    private final OrderUserService orderService;
 
     public void processUserOrderProduct(Long userId, String name, Long orderId, LocalDate date, Long productId,
             BigDecimal price) {
@@ -35,11 +35,11 @@ public class UserService {
                     return savedUser;
                 });
 
-            Order order = orderService.findOrCreateOrder(orderId, date, user);
-            orderService.addProductToOrder(order, productId, price);
+            OrderUser orderUser = orderService.createOrderUser(orderId, date, user);
+            orderService.addProductToOrderUser(orderUser, productId, price);
 
-            if (!user.getOrders().contains(order)) {
-                user.getOrders().add(order);
+            if (!user.getOrderUsers().contains(orderUser)) {
+                user.getOrderUsers().add(orderUser);
                 log.info("Pedido adicionado à lista de pedidos do usuário ID: {}", userId);
             } else {
                 log.info("Pedido já está na lista do usuário ID: {}", userId);

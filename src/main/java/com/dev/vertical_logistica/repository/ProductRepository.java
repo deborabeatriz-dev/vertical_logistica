@@ -1,9 +1,0 @@
-package com.dev.vertical_logistica.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.dev.vertical_logistica.model.Product;
-
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    
-}

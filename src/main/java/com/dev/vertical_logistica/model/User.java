@@ -21,6 +21,6 @@ public class User {
     private String name;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orders;
+    private List<OrderUser> orderUsers;
 
 }
