@@ -16,6 +16,7 @@ public class UserDto {
 
     private String name;
 
+    @JsonProperty("orders")
     private List<OrderUserDto> ordersUsers;
     
 }

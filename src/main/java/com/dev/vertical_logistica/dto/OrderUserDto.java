@@ -20,6 +20,7 @@ public class OrderUserDto {
 
     private LocalDate date;
 
+    @JsonProperty("products")
     private List<ProducOrdertDto> productsOrders;
 
 }
