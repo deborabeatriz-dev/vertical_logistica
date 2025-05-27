@@ -6,9 +6,14 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.dev.vertical_logistica.dto.ParseResultDto;
+import com.dev.vertical_logistica.dto.ParseResultDto.LineError;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +25,19 @@ public class ParseSystemLegacyService {
 
     private final UserService userService;
     
-    public void processLegacyFile(MultipartFile file) {
+    public ParseResultDto processLegacyFile(MultipartFile file) {
         log.info("Iniciando processamento do arquivo legado: {}", file.getOriginalFilename());
+
+        int totalLines = 0;
+        List<LineError> errors = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
             String line;
-            int lineNumber = 0;
-
             while ((line = reader.readLine()) != null ) {
-                lineNumber++;
+                totalLines++;
                 if(line.trim().isEmpty()) {
-                    log.debug("Linha {} vazia, pulando...", lineNumber);
+                    log.debug("Linha {} vazia, pulando...", totalLines);
                     continue;
                 }
 
@@ -44,20 +50,22 @@ public class ParseSystemLegacyService {
                     LocalDate date = LocalDate.parse(line.substring(87, 95), DateTimeFormatter.ofPattern("yyyyMMdd"));
 
                     log.info("Linha {} processada: userId={}, userName={}, orderId={}, productId={}, price={}, date={}",
-                            lineNumber, userId, name, orderId, productId, price, date);
+                            totalLines, userId, name, orderId, productId, price, date);
 
                     userService.processUserOrderProduct(userId, name, orderId, date, productId, price);
                 } catch (Exception e) {
-                    log.error("Erro ao processar linha {}: {}", lineNumber, line, e);
-                    throw new RuntimeException("Falha ao processar a linha " + lineNumber + ". Verifique o formato do arquivo.", e);
+                    log.error("Erro ao processar linha {}: {}", totalLines, line, e);
+                    errors.add(new LineError(totalLines, line, e.getMessage()));
                 }
             }
 
-            log.info("Processamento do arquivo legado finalizado. Total linhas processadas: {}", lineNumber);
+            log.info("Processamento do arquivo legado finalizado. Total linhas processadas: {}", totalLines);
         } catch (Exception e) {
             log.error("Erro ao processar o arquivo legado", e);
             throw new RuntimeException("Falha no processamento do arquivo", e);
         }
+
+        return new ParseResultDto(totalLines, errors.size(), errors);
     }
 
 }
