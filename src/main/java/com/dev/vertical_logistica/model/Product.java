@@ -23,9 +23,8 @@ public class Product {
     @Column(name = "product_id")
     private Long productId;
 
-    @Column(name = "value")
-    private BigDecimal value;
-    
+    @Column(name = "price")
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
