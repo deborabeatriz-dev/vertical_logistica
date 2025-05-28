@@ -19,18 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OrderUserService {
     
-    private final OrderUserRepository orderRepository;
+    private final OrderUserRepository orderUserRepository;
     private final ProductOrderService productOrderService;
 
     public OrderUser createOrderUser(Long orderId, LocalDate date, User user) {
         try {
             log.info("Verificando existência de pedido. orderId={}, userId={}", orderId, user.getUserId());
     
-            return orderRepository.findByOrderIdAndDateAndUser(orderId, date, user)
+            return orderUserRepository.findByOrderIdAndDateAndUser(orderId, date, user)
                 .orElseGet(() -> {
                     log.info("Pedido não encontrado. Criando novo pedido.");
                     OrderUser newOrderUser = new OrderUser(null, orderId, date, new ArrayList<>(), user);
-                    OrderUser savedOrderUser = orderRepository.save(newOrderUser);
+                    OrderUser savedOrderUser = orderUserRepository.save(newOrderUser);
                     log.info("Pedido criado com sucesso: id={}, orderId={}", savedOrderUser.getId(), savedOrderUser.getOrderId());
                     return savedOrderUser;
                 });
@@ -56,7 +56,7 @@ public class OrderUserService {
             orderUser.getProductOrders().add(productOrder);
             productOrder.setOrderUser(orderUser);
     
-            orderRepository.save(orderUser);
+            orderUserRepository.save(orderUser);
             log.info("Pedido atualizado salvo no banco: {}", orderUser.getOrderId());
     
         } catch (Exception e) {
