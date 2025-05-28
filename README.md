@@ -171,6 +171,37 @@ O sistema utiliza SLF4J com níveis configuráveis:
 - **DEBUG**: Detalhes de linhas processadas
 - **ERROR**: Erros de processamento e exceções
 
+
+## ⚙️ Configuração do Banco de Dados
+
+O projeto utiliza **H2 Database** para armazenamento dos dados durante o desenvolvimento e testes.
+
+### Modos de uso do banco H2
+
+Você pode escolher entre duas configurações no arquivo `application.properties` para o banco de dados H2:
+
+- **Banco em memória (padrão para testes):**
+
+```properties
+spring.datasource.url=jdbc:h2:mem:tempdb
+spring.datasource.username=admin
+spring.datasource.password=
+```
+
+- **Banco persistente em arquivo:**
+
+```properties
+spring.datasource.url=jdbc:h2:file:./data/tempdb
+spring.datasource.username=admin
+spring.datasource.password=
+```
+
+## Observações importantes
+
+- Nos testes automatizados, a aplicação utiliza a configuração com banco em memória e porta de servidor aleatória (server.port=0), para evitar conflitos.
+
+- Ao rodar a aplicação localmente para desenvolvimento, recomenda-se usar o banco persistente em arquivo para facilitar a depuração e análise dos dados.
+
 ## 👥 Autor
 
 Desenvolvido por **Débora** - [GitHub](https://github.com/deborabeatriz-dev)
