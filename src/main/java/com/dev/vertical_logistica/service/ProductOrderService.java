@@ -16,13 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductOrderService {
     
     public ProductOrder createProductOrder(Long productId, BigDecimal price, OrderUser orderUser) {
+
+        Long orderId = null;
+
         try {
-            log.info("Criando produto. productId={}, price={}, orderId={}", productId, price, orderUser.getOrderId());
+            orderId = orderUser.getOrderId();
+            log.info("Criando produto. productId={}, price={}, orderId={}", productId, price, orderId);
             return new ProductOrder(null, productId, price, orderUser);
         } catch (Exception e) {
-            log.error("Erro ao criar produto productId={}, orderId={}", productId, orderUser.getOrderId(), e);
+            log.error("Erro ao criar produto productId={}, orderId={}", productId, orderId, e);
             throw new RuntimeException("Falha ao criar produto", e);
         }
-    }
+        
+    }    
     
 }

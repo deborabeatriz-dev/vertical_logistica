@@ -1,6 +1,8 @@
 package com.dev.vertical_logistica.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -9,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -78,6 +81,53 @@ public class OrderUserServiceTest {
 
         assertEquals(1, orderUser.getProductOrders().size());
         verify(orderUserRepository).save(orderUser);
+    }
+
+    @Test
+    void shouldHandleExceptionWhenCreatingOrderUser() {
+        User user = new User(1L, "Dev", new ArrayList<>());
+        LocalDate date = LocalDate.now();
+
+        when(orderUserRepository.findByOrderIdAndDateAndUser(100L, date, user))
+            .thenThrow(new RuntimeException("Database error"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, 
+            () -> orderUserService.createOrderUser(100L, date, user));
+
+        assertEquals("Falha ao criar pedido", exception.getMessage());
+        assertTrue(exception.getCause() instanceof RuntimeException);
+    }
+
+    @Test
+    void shouldNotAddProductWhenAlreadyExists() {
+        User user = new User(1L, "Dev", new ArrayList<>());
+        
+        ProductOrder existingProduct = new ProductOrder(1L, 200L, new BigDecimal("99.99"), null);
+        List<ProductOrder> productOrders = new ArrayList<>();
+        productOrders.add(existingProduct);
+        
+        OrderUser orderUser = new OrderUser(1L, 100L, LocalDate.now(), productOrders, user);
+
+        orderUserService.addProductToOrderUser(orderUser, 200L, new BigDecimal("99.99"));
+
+        assertEquals(1, orderUser.getProductOrders().size());
+        verify(productOrderService, never()).createProductOrder(any(), any(), any());
+        verify(orderUserRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldHandleExceptionWhenAddingProduct() {
+        User user = new User(1L, "Dev", new ArrayList<>());
+        OrderUser orderUser = new OrderUser(1L, 100L, LocalDate.now(), new ArrayList<>(), user);
+
+        when(productOrderService.createProductOrder(any(), any(), any()))
+            .thenThrow(new RuntimeException("Product creation failed"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+            () -> orderUserService.addProductToOrderUser(orderUser, 200L, new BigDecimal("99.99")));
+
+        assertEquals("Falha ao adicionar produto ao pedido", exception.getMessage());
+        assertTrue(exception.getCause().getMessage().contains("Product creation failed"));
     }
 
 }

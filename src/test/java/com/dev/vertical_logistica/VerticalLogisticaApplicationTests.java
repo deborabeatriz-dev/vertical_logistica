@@ -10,4 +10,9 @@ class VerticalLogisticaApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+    void main() {
+        VerticalLogisticaApplication.main(new String[] {});
+    }
+
 }

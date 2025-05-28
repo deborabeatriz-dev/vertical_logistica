@@ -1,5 +1,7 @@
 package com.dev.vertical_logistica.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,4 +55,48 @@ public class UserServiceTest {
         verify(userRepository, times(2)).save(any());
         verify(orderUserService).addProductToOrderUser(orderUser, productId, price);
     }
+
+    @Test
+    void shouldLogIfOrderAlreadyExistsInUser() {
+        Long userId = 2L;
+        String name = "Débora";
+        Long orderId = 20L;
+        LocalDate date = LocalDate.now();
+        Long productId = 200L;
+        BigDecimal price = new BigDecimal("75.00");
+
+        User user = new User(userId, name, new ArrayList<>());
+        OrderUser orderUser = new OrderUser(2L, orderId, date, new ArrayList<>(), user);
+        user.getOrderUsers().add(orderUser);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(orderUserService.createOrderUser(orderId, date, user)).thenReturn(orderUser);
+
+        userService.processUserOrderProduct(userId, name, orderId, date, productId, price);
+
+        verify(orderUserService).addProductToOrderUser(orderUser, productId, price);
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenOrderCreationFails() {
+        Long userId = 3L;
+        String name = "Erro";
+        Long orderId = 30L;
+        LocalDate date = LocalDate.now();
+        Long productId = 300L;
+        BigDecimal price = new BigDecimal("100.00");
+
+        User user = new User(userId, name, new ArrayList<>());
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(orderUserService.createOrderUser(orderId, date, user))
+            .thenThrow(new IllegalStateException("Erro simulado"));
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            userService.processUserOrderProduct(userId, name, orderId, date, productId, price);
+        });
+
+        assertEquals("Falha no processamento dos dados do usuário/pedido/produto", thrown.getMessage());
+    }
+
 }
