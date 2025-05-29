@@ -25,6 +25,22 @@ O **Vertical Logística** é uma aplicação REST API que processa arquivos de s
 - **JaCoCo** (cobertura de testes)
 - **Maven**
 
+## 🧱 Decisões Arquiteturais e Padrões Aplicados
+
+- **Arquitetura em Camadas (Layered Architecture)**: A aplicação foi estruturada em camadas (controller, service, repository), promovendo separação de responsabilidades e facilitando manutenção e testes.
+
+- **Padrão DTO (Data Transfer Object)**: Utilizado para abstrair e controlar os dados trafegados entre as camadas da aplicação e a exposição via API.
+
+- **Repository Pattern (Spring Data JPA)**: Uso de interfaces que abstraem a persistência de dados, facilitando integração com o banco e promovendo testes mais limpos.
+
+- **Service Layer Pattern**: A lógica de negócio foi encapsulada em serviços dedicados (UserService, OrderUserService, ProductOrderService, etc.), permitindo reutilização e testes unitários eficazes.
+
+- **Tratamento de Erros e Relatórios Detalhados**: Erros no processamento de arquivos são capturados e retornados de forma estruturada, mantendo a robustez e a rastreabilidade.
+
+- **Banco H2 para Desenvolvimento/Testes**: O H2 foi escolhido por ser leve, embutido e de fácil configuração, ideal para testes locais.
+
+- **Testes Automatizados com JUnit 5 + Mockito + JaCoCo**: Utilizados para garantir a qualidade e cobertura do código, validando tanto os fluxos de sucesso quanto de erro.
+
 ## 📁 Estrutura do Projeto
 
 ```
@@ -232,4 +248,4 @@ O banco estará disponível em: `http://localhost:8080/h2-console`
 
 ## 👥 Autor
 
-Desenvolvido por **Débora** - [GitHub](https://github.com/deborabeatriz-dev)
+Desenvolvido por **Débora Beatriz** - [GitHub](https://github.com/deborabeatriz-dev) | [LinkedIn](https://www.linkedin.com/in/deborabeatriz/)
