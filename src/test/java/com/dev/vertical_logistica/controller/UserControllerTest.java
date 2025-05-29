@@ -1,100 +1,102 @@
 package com.dev.vertical_logistica.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import com.dev.vertical_logistica.dto.OrderUserDto;
-import com.dev.vertical_logistica.dto.ProducOrdertDto;
 import com.dev.vertical_logistica.dto.UserDto;
-import com.dev.vertical_logistica.model.OrderUser;
-import com.dev.vertical_logistica.model.ProductOrder;
-import com.dev.vertical_logistica.model.User;
-import com.dev.vertical_logistica.repository.UserRepository;
+import com.dev.vertical_logistica.service.UserService;
 
 public class UserControllerTest {
 
-    private UserRepository userRepository;
+    private UserService userService;
     private UserController userController;
 
     @BeforeEach
     void setup() {
-        userRepository = mock(UserRepository.class);
-        userController = new UserController(userRepository);
+        userService = mock(UserService.class);
+        userController = new UserController(userService);
     }
 
     @Test
-    void testGetUsersWithFilters_returnsFilteredUserDtos() {
+    void shouldCallServiceWithAllParameters() {
+        Long orderId = 100L;
+        LocalDate startDate = LocalDate.of(2025, 5, 1);
+        LocalDate endDate = LocalDate.of(2025, 5, 31);
+        List<UserDto> expectedResult = List.of(new UserDto());
+
+        when(userService.getUsersWithFilters(orderId, startDate, endDate))
+            .thenReturn(expectedResult);
+
+        List<UserDto> result = userController.getUsersWithFilters(orderId, startDate, endDate);
+
+        assertEquals(expectedResult, result);
+        verify(userService).getUsersWithFilters(orderId, startDate, endDate);
+    }
+
+    @Test
+    void shouldCallServiceWithNullParameters() {
+        List<UserDto> expectedResult = new ArrayList<>();
+        when(userService.getUsersWithFilters(null, null, null))
+            .thenReturn(expectedResult);
+
+        List<UserDto> result = userController.getUsersWithFilters(null, null, null);
+
+        assertEquals(expectedResult, result);
+        verify(userService).getUsersWithFilters(null, null, null);
+    }
+
+    @Test
+    void shouldCallServiceWithOnlyOrderId() {
+        Long orderId = 200L;
+        List<UserDto> expectedResult = List.of(new UserDto());
         
-        User user = new User();
-        user.setUserId(1L);
-        user.setName("Débora");
+        when(userService.getUsersWithFilters(orderId, null, null))
+            .thenReturn(expectedResult);
 
-        OrderUser orderUser = new OrderUser();
-        orderUser.setOrderId(100L);
-        orderUser.setDate(LocalDate.of(2025, 5, 28));
-        orderUser.setUser(user);
+        List<UserDto> result = userController.getUsersWithFilters(orderId, null, null);
 
-        ProductOrder productOrder = new ProductOrder();
-        productOrder.setProductId(1L);
-        productOrder.setPrice(new BigDecimal("500.00"));
-        productOrder.setOrderUser(orderUser);
-
-        orderUser.setProductOrders(List.of(productOrder));
-        user.setOrderUsers(List.of(orderUser));
-
-        Mockito.when(userRepository.findAll()).thenReturn(List.of(user));
-
-        List<UserDto> result = userController.getUsersWithFilters(
-                100L,
-                LocalDate.of(2025, 5, 1),
-                LocalDate.of(2025, 5, 31)
-        );
-
-        assertEquals(1, result.size());
-        UserDto userDto = result.get(0);
-        assertEquals(1L, userDto.getUserId());
-        assertEquals("Débora", userDto.getName());
-        assertEquals(1, userDto.getOrdersUsers().size());
-
-        OrderUserDto orderDto = userDto.getOrdersUsers().get(0);
-        assertEquals(100L, orderDto.getOrderId());
-        assertEquals(new BigDecimal("500.00"), orderDto.getTotal());
-        assertEquals(LocalDate.of(2025, 5, 28), orderDto.getDate());
-        assertEquals(1, orderDto.getProductsOrders().size());
-
-        ProducOrdertDto productDto = orderDto.getProductsOrders().get(0);
-        assertEquals(1L, productDto.getProductId());
-        assertEquals(new BigDecimal("500.00"), productDto.getPrice());
+        assertEquals(expectedResult, result);
+        verify(userService).getUsersWithFilters(orderId, null, null);
     }
 
     @Test
-    void testGetUsersWithFilters_noMatchingOrders_returnsEmptyList() {
+    void shouldCallServiceWithOnlyDates() {
+        LocalDate startDate = LocalDate.of(2025, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 12, 31);
+        List<UserDto> expectedResult = new ArrayList<>();
+        
+        when(userService.getUsersWithFilters(null, startDate, endDate))
+            .thenReturn(expectedResult);
 
-        User user = new User();
-        user.setUserId(1L);
-        user.setName("Débora");
+        List<UserDto> result = userController.getUsersWithFilters(null, startDate, endDate);
 
-        OrderUser orderUser = new OrderUser();
-        orderUser.setOrderId(200L);
-        orderUser.setDate(LocalDate.of(2025, 1, 1));
-        user.setOrderUsers(List.of(orderUser));
+        assertEquals(expectedResult, result);
+        verify(userService).getUsersWithFilters(null, startDate, endDate);
+    }
 
-        when(userRepository.findAll()).thenReturn(List.of(user));
+    @Test
+    void shouldReturnWhatServiceReturns() {
+        List<UserDto> serviceResult = List.of(
+            new UserDto(), 
+            new UserDto(), 
+            new UserDto()
+        );
+        
+        when(userService.getUsersWithFilters(null, null, null))
+            .thenReturn(serviceResult);
 
-        List<UserDto> result = userController.getUsersWithFilters(100L, null, null);
+        List<UserDto> result = userController.getUsersWithFilters(null, null, null);
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertEquals(3, result.size());
+        assertEquals(serviceResult, result);
     }
 }
