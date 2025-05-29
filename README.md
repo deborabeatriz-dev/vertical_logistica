@@ -184,17 +184,45 @@ Você pode escolher entre duas configurações no arquivo `application.propertie
 
 ```properties
 spring.datasource.url=jdbc:h2:mem:tempdb
+#spring.datasource.url=jdbc:h2:file:./data/tempdb
 spring.datasource.username=admin
 spring.datasource.password=
+server.port=0
 ```
 
 - **Banco persistente em arquivo:**
 
 ```properties
+#spring.datasource.url=jdbc:h2:mem:tempdb
 spring.datasource.url=jdbc:h2:file:./data/tempdb
 spring.datasource.username=admin
 spring.datasource.password=
+#server.port=0
 ```
+
+### 🖥️ Acessando o H2 Console
+
+A aplicação disponibiliza um console web para visualizar o banco H2.
+
+1. Inicie a aplicação localmente.
+2. Acesse no navegador:
+
+O banco estará disponível em: `http://localhost:8080/h2-console`
+
+> 💡 Se estiver usando o banco em memória com `server.port=0`, a aplicação será iniciada em uma porta aleatória. Verifique no terminal a porta atribuída e use-a no lugar da 8080.
+
+3. Preencha os campos do formulário com os dados corretos, dependendo da configuração utilizada:
+
+#### Para banco em memória:
+- **JDBC URL**: `jdbc:h2:mem:tempdb`
+
+#### Para banco persistente em arquivo:
+- **JDBC URL**: `jdbc:h2:file:./data/tempdb`
+
+**Usuário**: `admin`  
+**Senha**: *(deixe em branco)*
+
+4. Clique em **Connect**
 
 ## Observações importantes
 
