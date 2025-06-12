@@ -1,6 +1,7 @@
 package com.dev.vertical_logistica.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dev.vertical_logistica.dto.ParseResultDto;
 import com.dev.vertical_logistica.service.ParseSystemLegacyService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -17,7 +19,8 @@ public class ParseController {
 
     private final ParseSystemLegacyService parseService;
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload de arquivo legado")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             ParseResultDto result = parseService.processLegacyFile(file);

@@ -21,6 +21,7 @@ O **Vertical Logística** é uma aplicação REST API que processa arquivos de s
 - **Spring Data JPA**
 - **H2 Database** (desenvolvimento)
 - **Lombok**
+- **OpenAPI 3 + Swagger UI** (documentação da API)
 - **JUnit 5** + **Mockito** (testes)
 - **JaCoCo** (cobertura de testes)
 - **Maven**
@@ -55,7 +56,8 @@ src/main/java/com/dev/vertical_logistica/
 │   └── ProductOrderService.java
 ├── model/              # Entidades JPA
 ├── repository/         # Repositórios de dados
-└── dto/               # Objetos de transferência
+├── dto/               # Objetos de transferência
+└── config/            # Configurações
 ```
 
 ## 🔧 Pré-requisitos
@@ -241,6 +243,17 @@ O banco estará disponível em: `http://localhost:8080/h2-console`
 **Senha**: *(deixe em branco)*
 
 4. Clique em **Connect**
+
+### 📚 Documentação da API (Swagger)
+
+O projeto inclui documentação automática da API utilizando OpenAPI 3 com Swagger UI.
+
+#### Acessando a Documentação
+Com a aplicação em execução, acesse:
+
+Swagger UI: http://localhost:8080/swagger-ui.html
+
+> 💡 Se estiver usando server.port=0, substitua 8080 pela porta atribuída automaticamente.
 
 ## Observações importantes
 
