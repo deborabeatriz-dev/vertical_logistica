@@ -204,6 +204,7 @@ spring.datasource.url=jdbc:h2:mem:tempdb
 spring.datasource.username=admin
 spring.datasource.password=
 server.port=0
+#server.port=8080
 ```
 
 - **Banco persistente em arquivo:**
@@ -214,6 +215,7 @@ spring.datasource.url=jdbc:h2:file:./data/tempdb
 spring.datasource.username=admin
 spring.datasource.password=
 #server.port=0
+server.port=8080
 ```
 
 ### 🖥️ Acessando o H2 Console
