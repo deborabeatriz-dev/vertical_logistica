@@ -244,12 +244,12 @@ O banco estará disponível em: `http://localhost:8080/h2-console`
 
 4. Clique em **Connect**
 
-### 📚 Documentação da API (Swagger)
+## 📚 Documentação da API (Swagger)
 
 O projeto inclui documentação automática da API utilizando OpenAPI 3 com Swagger UI.
 
 #### Acessando a Documentação
-Com a aplicação em execução, acesse:
+- Com a aplicação em execução, acesse:
 
 Swagger UI: http://localhost:8080/swagger-ui.html
 
